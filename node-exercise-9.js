@@ -8,19 +8,31 @@ length, just the data as a String; one line per URL. The catch is that you
 must print them out in the same order as the URLs are provided to you as
 command-line arguments. */
 
-var http = require('http');
-var strings = [];
-for (var i = 2; i < process.argv.length; i++) {
-  http.get(process.argv[i], function(response) {
-    str = ""
+const http = require('http')
+const results = []
+let count = 0
+
+function printResults () {
+  for (let i = 0; i < 3; i++) {
+    console.log(results[i])
+  }
+}
+
+function httpGet (index) {
+  http.get(process.argv[2 + index], function (response) {
+    var str = "";
     response.setEncoding('utf8');
     response.on('data', function(data) {
       str += data;
     });
-    response.on('end', function() {
-      strings[i] = str;
-      while (i !== 2 || strings[i-1] !== undefined) {}
-      console.log(strings[i]);
+    response.on('end', function(data) {
+      results[index] = str;
+      count++;
+      if (count === 3) { printResults(); }
     });
-  });
+  })
+}
+
+for (let i = 0; i < 3; i++) {
+  httpGet(i)
 }
